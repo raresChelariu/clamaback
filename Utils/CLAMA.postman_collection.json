@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "0f1bf3ec-c08c-4ee1-8186-2092d58520eb",
+		"name": "CLAMA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3R5cGUiOiJ0ZWFjaGVyIiwiZmlyc3RfbmFtZSI6IkNpcHJpYW4iLCJsYXN0X25hbWUiOiJCYWRlYSIsImVtYWlsIjoiY2lwcmlhbmJhZGVhQGdtYWlsLmNvbSIsIklEIjoxLCJpYXQiOjE2MjM2NzQzNjYsImV4cCI6MTYyMzY4MTU2Nn0.NY5nFv5_45joj4jn0-GtRU-hLmcV4KxgCRsd0GUvPgU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-ACC}}",
+							"host": [
+								"{{CL-ACC}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"ciprianbadea@gmail.com\",\r\n    \"pass\" : \"pass123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-ACC}}/login",
+							"host": [
+								"{{CL-ACC}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"ciprianbadea@gmail.com\",\r\n    \"pass\" : \"pass123\",\r\n    \"first_name\": \"Ciprian\",   \r\n    \"last_name\": \"Badea\",\r\n    \"account_type\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-ACC}}/register",
+							"host": [
+								"{{CL-ACC}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subject",
+			"item": [
+				{
+					"name": "Get subjects of auth teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-SUB}}",
+							"host": [
+								"{{CL-SUB}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add subject for auth teacher",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{CL-HOME}}",
+					"host": [
+						"{{CL-HOME}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "CL-HOME",
+			"value": "http://127.0.0.1:3000"
+		},
+		{
+			"key": "CL-ACC",
+			"value": "{{CL-HOME}}/accounts"
+		},
+		{
+			"key": "CL-SUB",
+			"value": "{{CL-HOME}}/subjects"
+		}
+	]
+}

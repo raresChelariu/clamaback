@@ -1,0 +1,23 @@
+{
+  "name": "clamaback",
+  "version": "1.0.0",
+  "description": "backend for clama project",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raresChelariu/clamaback.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raresChelariu/clamaback/issues"
+  },
+  "homepage": "https://github.com/raresChelariu/clamaback#readme",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "mariadb": "^2.5.3"
+  }
+}
