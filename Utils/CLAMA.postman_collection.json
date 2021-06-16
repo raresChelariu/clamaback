@@ -19,7 +19,12 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3R5cGUiOiJ0ZWFjaGVyIiwiZmlyc3RfbmFtZSI6IkNpcHJpYW4iLCJsYXN0X25hbWUiOiJCYWRlYSIsImVtYWlsIjoiY2lwcmlhbmJhZGVhQGdtYWlsLmNvbSIsIklEIjoxLCJpYXQiOjE2MjM2NzQzNjYsImV4cCI6MTYyMzY4MTU2Nn0.NY5nFv5_45joj4jn0-GtRU-hLmcV4KxgCRsd0GUvPgU",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{JWT-TEACHER}}",
 									"type": "string"
 								}
 							]
@@ -77,7 +82,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\" : \"ciprianbadea@gmail.com\",\r\n    \"pass\" : \"pass123\",\r\n    \"first_name\": \"Ciprian\",   \r\n    \"last_name\": \"Badea\",\r\n    \"account_type\": \"teacher\"\r\n}",
+							"raw": "{\r\n    \"email\" : \"ionelpop@gmail.com\",\r\n    \"pass\" : \"pass123\",\r\n    \"first_name\": \"Ionel\",   \r\n    \"last_name\": \"Pop\",\r\n    \"account_type\": \"teacher\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -115,6 +120,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -129,9 +144,278 @@
 				{
 					"name": "Add subject for auth teacher",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"SD\",\r\n    \"description\": \"Structuri de date\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-SUB}}",
+							"host": [
+								"{{CL-SUB}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
-						"url": null
+						"url": {
+							"raw": "{{CL-SUB}}/all",
+							"host": [
+								"{{CL-SUB}}"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "School Class",
+			"item": [
+				{
+					"name": "Get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-SC}}/all",
+							"host": [
+								"{{CL-SC}}"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add school class",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject_name\": \"SD\",\r\n    \"school_class_name\": \"Grupa A1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-SC}}",
+							"host": [
+								"{{CL-SC}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get classes of subject",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-SC}}/subject?subject_name=SD",
+							"host": [
+								"{{CL-SC}}"
+							],
+							"path": [
+								"subject"
+							],
+							"query": [
+								{
+									"key": "subject_name",
+									"value": "SD"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Assignments",
+			"item": [
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-ASN}}/all",
+							"host": [
+								"{{CL-ASN}}"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add assignment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{CL-ASN}}",
+							"host": [
+								"{{CL-ASN}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add solution to assignment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "file",
+									"type": "file",
+									"src": "/C:/Users/Rares/Desktop/runGuide.txt"
+								},
+								{
+									"key": "assignment_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{CL-ASN}}/solution",
+							"host": [
+								"{{CL-ASN}}"
+							],
+							"path": [
+								"solution"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Grades",
+			"item": [
+				{
+					"name": "Get students grades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{{{CL-GRADES}}}}/student?student_acc_id=1",
+							"host": [
+								"{{{{CL-GRADES}}}}"
+							],
+							"path": [
+								"student"
+							],
+							"query": [
+								{
+									"key": "student_acc_id",
+									"value": "1"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -140,25 +424,68 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": null
+						"url": {
+							"raw": "{{{{CL-GRADES}}}}/all",
+							"host": [
+								"{{{{CL-GRADES}}}}"
+							],
+							"path": [
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add grade for assignment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"assignment_ID\" : 1,\r\n    \"student_acc_ID\": 1,\r\n     \"school_class_ID\": 1, \r\n     \"score_current\":5, \r\n     \"score_ceiling\":10, \r\n     \"teacher_comment\": \"Macar ai trecut\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{{{CL-GRADES}}}}/assignment",
+							"host": [
+								"{{{{CL-GRADES}}}}"
+							],
+							"path": [
+								"assignment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add grade for oral examination",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"student_acc_ID\": 1,\r\n     \"school_class_ID\": 1, \r\n     \"score_current\":7, \r\n     \"score_ceiling\":10, \r\n     \"teacher_comment\": \"Se putea si mai bine\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{{{CL-GRADES}}}}",
+							"host": [
+								"{{{{CL-GRADES}}}}"
+							]
+						}
 					},
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "hello",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{CL-HOME}}",
-					"host": [
-						"{{CL-HOME}}"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"event": [
@@ -183,6 +510,10 @@
 	],
 	"variable": [
 		{
+			"key": "JWT-TEACHER",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJjaXByaWFuYmFkZWFAZ21haWwuY29tIiwiZmlyc3RfbmFtZSI6IkNpcHJpYW4iLCJsYXN0X25hbWUiOiJCYWRlYSIsImFjY291bnRfdHlwZSI6InRlYWNoZXIiLCJpYXQiOjE2MjM3MTU4ODcsImV4cCI6MTYyMzcyMzA4N30.RmPiYFWU_5W73KQ4ctN5vFjZLCqQt8mz84rYYl-xzVI"
+		},
+		{
 			"key": "CL-HOME",
 			"value": "http://127.0.0.1:3000"
 		},
@@ -193,6 +524,18 @@
 		{
 			"key": "CL-SUB",
 			"value": "{{CL-HOME}}/subjects"
+		},
+		{
+			"key": "CL-SC",
+			"value": "{{CL-HOME}}/schoolclasses/"
+		},
+		{
+			"key": "CL-ASN",
+			"value": "{{CL-HOME}}/assignments"
+		},
+		{
+			"key": "CL-GRADES",
+			"value": "{{CL-HOME}}/grades"
 		}
 	]
 }
