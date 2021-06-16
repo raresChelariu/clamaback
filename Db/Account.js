@@ -9,8 +9,9 @@ class Account {
     }
     /**
      * Computes a hash for a given string.
+     * For the sole purpose of storing in the database the hash of given password.
      * Code from https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript
-     * @param {string} str
+     * @param {string} str the string to be hashed - this will only be the password, for this project
      * @return {string} hash
      */
     static #hash = (str) => {
@@ -49,11 +50,42 @@ class Account {
         return DbUtils.Query(Account.Queries.findAll())
     }
 
+    /**
+     * Checks if the credentials are valid. Otherwise throws error.
+     * If successful, returns the jwt token and a user JSON.
+     * User JSON has following properties:
+     * "email" ,
+     * "pass",
+     * "first_name",
+     * "last_name",
+     * "account_type" ("teacher" OR "student")
+     * @param email
+     * @param pass
+     * @return {Promise}
+     * @constructor
+     */
     static Login(email, pass) {
         pass = Account.#hash(pass)
         return DbUtils.Query(Account.Queries.LoginProc(email, pass))
     }
-
+    /**
+     * Creates a new user. If successful, returns the jwt token and a user JSON.
+     * Throws error for duplicate email or invalid account_type
+     * The jwt token - must be
+     * User JSON has following properties:
+     * "email" ,+
+     * "pass",
+     * "first_name",
+     * "last_name",
+     * "account_type" ("teacher" OR "student")
+     * @param {string} email
+     * @param {string} pass
+     * @param {string} first_name
+     * @param {string} last_name
+     * @param {string} account_type
+     * @return {Promise}
+     * @constructor
+     */
     static Register(email, pass, first_name, last_name, account_type) {
         pass = Account.#hash(pass)
         return DbUtils.Query(Account.Queries.RegisterProc(email, pass, first_name, last_name, account_type))

@@ -8,10 +8,10 @@ class Assignment{
                 values: []
             }
         },
-        AddAssignment(school_class_ID, task) {
+        AddAssignment(teacher_account_ID, school_class_ID, task) {
             return {
-                sql: 'insert into assignment (school_class_ID, task) VALUES (?, ?)',
-                values: [school_class_ID, task]
+                sql: 'call Assignment_Add(?, ?, ?)',
+                values: [teacher_account_ID, school_class_ID, task]
             }
         },
         GetClassAssignments(school_class_ID) {
@@ -31,21 +31,25 @@ class Assignment{
         return DbUtils.Query(Assignment.Queries.findAll())
     }
 
-    /**
+    /** Adds an assignment.
+     * Throws error for invalid/nonexistent IDs. Throws error if class doesn't belong to teacher.
+     * @param {number} teacher_account_ID
      * @param {number} school_class_ID
      * @param {string} task
      * @return {Promise}
      * @constructor
      */
-    static AddAssignment(school_class_ID, task) {
-        return DbUtils.Query(Assignment.Queries.AddAssignment(school_class_ID, task))
+    static AddAssignment(teacher_account_ID, school_class_ID, task) {
+        return DbUtils.Query(Assignment.Queries.AddAssignment(teacher_account_ID, school_class_ID, task))
     }
 
+    /** Gets all assignments for a given school class, by school class ID.
+     * Throws error if ID is invalid/nonexistent.
+     * @param school_class_ID
+     * @return {Promise}
+     */
     static GetClassAssignments(school_class_ID) {
         return DbUtils.Query(Assignment.Queries.GetClassAssignments(school_class_ID))
-    }
-    static GetTeacherAssignments(teacher_account_ID) {
-        return DbUtils.Query(Assignment.Queries.GetTeacherAssignments(teacher_account_ID))
     }
 }
 

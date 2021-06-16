@@ -1,4 +1,4 @@
-const DefaultResponse = require("./DefaultResponse")
+const DefaultResponse = require("../Routing/DefaultResponse")
 const jwt = require("./ServerJwt")
 const Account = require("../Db/Account")
 
@@ -10,9 +10,9 @@ class Middleware {
      * @param {Request} req
      * @param {ServerResponse} res
      */
-    static AuthMiddleware = (req, res) => Middleware.CheckJwt(req, res)
-    static AuthTeacher = (req, res) => {
-        if (false === Middleware.CheckJwt(req, res)) {
+    static AuthMiddleware = (req, res) => Middleware.CheckAuth(req, res)
+    static CheckAuthTeacher = (req, res) => {
+        if (false === Middleware.CheckAuth(req, res)) {
             return false
         }
         if (Account.AccountTypes.Teacher !== req["user"]["account_type"]) {
@@ -22,7 +22,7 @@ class Middleware {
         return true
     }
 
-    static CheckJwt(req, res) {
+    static CheckAuth(req, res) {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
         if (!token) {
@@ -54,11 +54,11 @@ class Middleware {
         return false;
     }
 
-    static CheckRequiredFieldsBody(req, res, required) {
+    static CheckFieldsBody(req, res, required) {
         let key = 'body'
         return Middleware.#MiddlewareRequiredFields(req[key], res, required, key);
     }
-    static CheckRequiredFieldsQueryParams(req, res, required) {
+    static CheckFieldsQueryParams(req, res, required) {
         let key = 'query'
         return Middleware.#MiddlewareRequiredFields(req[key], res, required, key);
     }

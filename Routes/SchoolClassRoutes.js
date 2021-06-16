@@ -1,5 +1,5 @@
 const router = require('../Routing/Router')
-const Middleware = require("../Routing/Middleware")
+const Middleware = require("../CustomMiddleware/Middleware")
 const DefaultResponse = require("../Routing/DefaultResponse");
 const SchoolClass = require("../Db/SchoolClass");
 
@@ -11,7 +11,7 @@ const Required = {
     AddSchoolClassBody: ['subject_name', "school_class_name"]
 }
 
-router.get(RouteWithPrefix('/all'), Middleware.AuthTeacher,
+router.get(RouteWithPrefix('/all'), Middleware.CheckAuthTeacher,
     (req, res) => {
         SchoolClass.GetAll()
             .then(result => res["json"](result))
@@ -21,7 +21,7 @@ router.get(RouteWithPrefix('/all'), Middleware.AuthTeacher,
     }
 )
 
-router.get(RouteWithPrefix('/subject'), Middleware.AuthTeacher, (req, res) => Middleware.CheckRequiredFieldsQueryParams(req, res, Required.GetSchoolClassesOfSubjectQuery),
+router.get(RouteWithPrefix('/subject'), Middleware.CheckAuthTeacher, (req, res) => Middleware.CheckFieldsQueryParams(req, res, Required.GetSchoolClassesOfSubjectQuery),
     (req, res) => {
         let user_ID = req["user"]["ID"]
         let subjectName = req["query"][Required.GetSchoolClassesOfSubjectQuery[0]]
@@ -34,7 +34,7 @@ router.get(RouteWithPrefix('/subject'), Middleware.AuthTeacher, (req, res) => Mi
     }
 )
 
-router.post(RouteWithPrefix(''), Middleware.AuthTeacher, (req, res) => Middleware.CheckRequiredFieldsBody(req, res, Required.AddSchoolClassBody),
+router.post(RouteWithPrefix(''), Middleware.CheckAuthTeacher, (req, res) => Middleware.CheckFieldsBody(req, res, Required.AddSchoolClassBody),
     (req, res) => {
         let user_ID = req["user"]["ID"]
         let subjectName = req["body"][Required.AddSchoolClassBody[0]]

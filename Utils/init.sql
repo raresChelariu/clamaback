@@ -95,7 +95,7 @@ create or replace table grade
     student_ID      int                    not null,
     school_class_ID int                    not null,
     score_current   int                    not null,
-    score_ceiling      int      default 10    not null,
+    score_ceiling   int      default 10    not null,
     date_created    datetime default now() not null,
     teacher_comment varchar(256),
     constraint ValidStudentIDOnGrade foreign key (student_ID) references student (ID) on delete cascade,
@@ -298,20 +298,77 @@ begin
 end;
 
 create or replace
-    definer = root@localhost procedure Grade_Add(IN in_acc_id int, IN in_school_class_id int,
-    IN in_score_current int, IN in_score_ceiling int, IN in_teacher_comment varchar(256))
+    definer = root@localhost procedure Assignment_Add(IN in_acc_id int, IN in_school_class_id int,
+                                                      IN in_task text)
+    modifies sql data
+begin
+    declare v_teacher_ID integer;
+    declare v_school_class_exists integer;
+    declare v_school_class_is_of_given_teacher integer;
+
+    set v_teacher_ID = -1;
+
+    select ID into v_teacher_ID from teacher where account_ID = in_acc_id limit 1;
+
+    if v_teacher_ID = -1 then
+        signal sqlstate '45000' set message_text = '$Invalid teacher account id$';
+    end if;
+
+    set v_school_class_exists = 0;
+
+    select count(*) into v_school_class_exists from school_class where school_class.ID = in_school_class_id;
+
+    if v_school_class_exists = 0 then
+        signal sqlstate '45000' set message_text = '$Invalid school class id$';
+    end if;
+
+    set v_school_class_is_of_given_teacher = 0;
+
+    select count(*)
+    into v_school_class_is_of_given_teacher
+    from school_class
+    where school_class.ID = in_school_class_id
+      and school_class.subject_ID in (select ID from subject where subject.teacher_ID = v_teacher_ID);
+
+    if v_school_class_is_of_given_teacher != 0 then
+        signal sqlstate '45000' set message_text = '$School class does not belong to teacher$';
+    end if;
+
+    insert into assignment (school_class_ID, task) VALUES (in_school_class_id, in_task);
+
+    select last_insert_id() as ID;
+end;
+
+
+
+create or replace
+    definer = root@localhost procedure Grade_Add(IN in_teacher_acc_id int, IN in_student_acc_id int, IN in_school_class_id int,
+                                                 IN in_score_current int, IN in_score_ceiling int,
+                                                 IN in_teacher_comment varchar(256))
     modifies sql data
 begin
     declare v_student_ID integer;
     declare v_school_class_exists integer;
+    declare v_teacher_ID integer default -1;
+    declare v_class_belongs_to_teacher integer default -1;
 
     if in_score_current > in_score_ceiling then
         signal sqlstate '45000' set message_text = '$Student score should be lower or equal than score ceiling$';
     end if;
 
+    select ID into v_teacher_ID from teacher where account_ID = in_teacher_acc_id;
+    if v_teacher_ID = -1  then
+        signal sqlstate '45000' set message_text = '$Invalid teacher account ID$';
+    end if;
+
+    select COUNT(*) into v_class_belongs_to_teacher from school_class where school_class.ID = in_school_class_id and subject_ID in (select ID from subject where subject.teacher_ID=v_teacher_ID);
+    if v_class_belongs_to_teacher = -1 then
+        signal sqlstate '45000' set message_text = '$Invalid teacher account ID$';
+    end if;
+
     set v_student_ID = -1;
 
-    select ID into v_student_ID from student where account_ID = in_acc_id limit 1;
+    select ID into v_student_ID from student where account_ID = in_student_acc_id limit 1;
 
     if v_student_ID = -1 then
         signal sqlstate '45000' set message_text = '$Invalid student account id$';
@@ -319,7 +376,7 @@ begin
 
     set v_school_class_exists = 0;
 
-    select count(*) into v_school_class_exists from school_class where school_class.ID=in_school_class_id;
+    select count(*) into v_school_class_exists from school_class where school_class.ID = in_school_class_id;
 
     if v_school_class_exists = 0 then
         signal sqlstate '45000' set message_text = '$Invalid school class id$';
@@ -330,3 +387,71 @@ begin
 
     select last_insert_id() as ID;
 end;
+
+create or replace
+    definer = root@localhost procedure Grade_AddForAssignment(IN in_teacher_acc_id int, IN in_assignment_id int, IN in_student_acc_id int,
+                                                              IN in_school_class_id int,
+                                                              IN in_score_current int, IN in_score_ceiling int,
+                                                              IN in_teacher_comment varchar(256))
+    modifies sql data
+begin
+    declare v_student_ID integer;
+    declare v_school_class_exists integer;
+    declare v_exists_assignment integer;
+    declare v_inserted_grade_ID integer;
+    declare v_teacher_ID integer default -1;
+    declare v_class_belongs_to_teacher integer default -1;
+
+    select ID into v_teacher_ID from teacher where account_ID = in_teacher_acc_id;
+    if v_teacher_ID = -1  then
+        signal sqlstate '45000' set message_text = '$Invalid teacher account ID$';
+    end if;
+
+    select COUNT(*) into v_class_belongs_to_teacher from school_class where school_class.ID = in_school_class_id and subject_ID in (select ID from subject where subject.teacher_ID=v_teacher_ID);
+    if v_class_belongs_to_teacher = -1 then
+        signal sqlstate '45000' set message_text = '$Invalid teacher account ID$';
+    end if;
+    set v_exists_assignment = 0;
+
+    select count(*) into v_exists_assignment from assignment where ID = in_assignment_id;
+
+    if v_exists_assignment = 0 then
+        signal sqlstate '45000' set message_text = '$Nonexistent assignment id$';
+    end if;
+
+    if in_score_current > in_score_ceiling then
+        signal sqlstate '45000' set message_text = '$Student score should be lower or equal than score ceiling$';
+    end if;
+
+    set v_student_ID = -1;
+
+    select ID
+    into v_student_ID
+    from student
+    where account_ID = in_student_acc_id
+    limit 1;
+
+    if v_student_ID = -1 then
+        signal sqlstate '45000' set message_text = '$Invalid student account id$';
+    end if;
+
+    set v_school_class_exists = 0;
+
+    select count(*)
+    into v_school_class_exists
+    from school_class
+    where school_class.ID = in_school_class_id;
+
+    if v_school_class_exists = 0 then
+        signal sqlstate '45000' set message_text = '$Invalid school class id$';
+    end if;
+
+    insert into grade (student_ID, school_class_ID, score_current, score_ceiling, teacher_comment)
+    VALUES (v_student_ID, in_school_class_id, in_score_current, in_score_ceiling, in_teacher_comment);
+
+    select last_insert_id() into v_inserted_grade_ID;
+
+    insert into assignment_grades (assignment_ID, grade_ID) VALUES (in_assignment_id, v_inserted_grade_ID);
+end;
+
+

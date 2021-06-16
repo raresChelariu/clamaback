@@ -1,6 +1,6 @@
 const router = require('../Routing/Router')
 const Subject = require('../Db/Subject')
-const Middleware = require("../Routing/Middleware")
+const Middleware = require("../CustomMiddleware/Middleware")
 const DefaultResponse = require("../Routing/DefaultResponse");
 
 const routePrefix = '/subjects'
@@ -10,7 +10,7 @@ const Required = {
     AddSubjectBody: ['name', 'description']
 }
 
-router.get(RouteWithPrefix('/all'), Middleware.AuthTeacher,
+router.get(RouteWithPrefix('/all'), Middleware.CheckAuthTeacher,
     (req, res) => {
         Subject.GetAll()
             .then(result => {
@@ -22,8 +22,8 @@ router.get(RouteWithPrefix('/all'), Middleware.AuthTeacher,
     }
 )
 
-router.post(RouteWithPrefix(''), Middleware.AuthTeacher,
-    (req, res) => Middleware.CheckRequiredFieldsBody(req, res, Required.AddSubjectBody),
+router.post(RouteWithPrefix(''), Middleware.CheckAuthTeacher,
+    (req, res) => Middleware.CheckFieldsBody(req, res, Required.AddSubjectBody),
     (req, res) => {
         let user_ID = req["user"]["ID"]
         let subjectName = req["body"][Required.AddSubjectBody[0]]
@@ -36,7 +36,7 @@ router.post(RouteWithPrefix(''), Middleware.AuthTeacher,
     }
 )
 
-router.get(RouteWithPrefix(''), Middleware.AuthTeacher,
+router.get(RouteWithPrefix(''), Middleware.CheckAuthTeacher,
     (req, res) => {
         let user_ID = req["user"]["ID"]
         Subject.GetTeachersSubjects(user_ID)

@@ -1,7 +1,7 @@
 const router = require('../Routing/Router')
 const Account = require('../Db/Account')
-const Middleware = require("../Routing/Middleware")
-const ServerJwt = require("../Routing/ServerJwt");
+const Middleware = require("../CustomMiddleware/Middleware")
+const ServerJwt = require("../CustomMiddleware/ServerJwt");
 const DefaultResponse = require("../Routing/DefaultResponse");
 
 const routePrefix = '/accounts'
@@ -13,7 +13,7 @@ const Required = {
 }
 
 router.post(RouteWithPrefix('/register'),
-    (req, res) => Middleware.CheckRequiredFieldsBody(req, res, Required.RegisterBody),
+    (req, res) => Middleware.CheckFieldsBody(req, res, Required.RegisterBody),
     (req, res) => {
         Account.Register(req["body"]["email"], req["body"]["pass"], req["body"]["first_name"], req["body"]["last_name"], req["body"]["account_type"])
             .then((result) => {
@@ -27,7 +27,7 @@ router.post(RouteWithPrefix('/register'),
     }
 )
 
-router.post(RouteWithPrefix('/login'), (req, res) => Middleware.CheckRequiredFieldsBody(req, res, Required.LoginBody),
+router.post(RouteWithPrefix('/login'), (req, res) => Middleware.CheckFieldsBody(req, res, Required.LoginBody),
     (req, res) => {
         Account.Login(req["body"]["email"], req["body"]["pass"])
             .then((result) => {
