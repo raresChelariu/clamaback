@@ -19,7 +19,7 @@ router.post(RouteWithPrefix('/register'),
             .then((result) => {
                 let payload = result[0][0]
                 let response = {user: payload, token: ServerJwt.sign(payload)}
-                res["json"](response, 200)
+                res["json"](response, 201)
             })
             .catch(e => {
                 DefaultResponse.DbPredefinedError(res, e)
@@ -33,7 +33,7 @@ router.post(RouteWithPrefix('/login'), (req, res) => Middleware.CheckRequiredFie
             .then((result) => {
                 let payload = result[0][0]
                 let response = {user: payload, token: ServerJwt.sign(payload)}
-                res["json"](response, 200)
+                res["json"](response)
             })
             .catch(e => {
                 DefaultResponse.DbPredefinedError(res, e)
@@ -46,7 +46,9 @@ router.get(RouteWithPrefix(''), Middleware.AuthMiddleware,
             .then(result => {
                 res["json"](result[0])
             })
-            .catch(e => DefaultResponse.Error(res, '', e))
+            .catch(e => {
+            DefaultResponse.DbPredefinedError(res, e)
+        })
     }
 )
 

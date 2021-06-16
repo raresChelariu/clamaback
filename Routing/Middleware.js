@@ -1,5 +1,6 @@
-const DefaultResponse = require("./DefaultResponse");
-const jwt = require("./ServerJwt");
+const DefaultResponse = require("./DefaultResponse")
+const jwt = require("./ServerJwt")
+const Account = require("../Db/Account")
 
 class Middleware {
     /**
@@ -10,6 +11,17 @@ class Middleware {
      * @param {ServerResponse} res
      */
     static AuthMiddleware = (req, res) => Middleware.CheckJwt(req, res)
+    static AuthTeacher = (req, res) => {
+        if (false === Middleware.CheckJwt(req, res)) {
+            return false
+        }
+        if (Account.AccountTypes.Teacher !== req["user"]["account_type"]) {
+            DefaultResponse.Error(res, DefaultResponse.Messages.UnauthorizedTeacherNeeded, null, 401)
+            return false
+        }
+        return true
+    }
+
     static CheckJwt(req, res) {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
@@ -32,12 +44,13 @@ class Middleware {
                 return false;
         return true;
     }
+
     static #MiddlewareRequiredFields(given, res, required, givenName) {
         let valid = Middleware.#RequiredFieldsPresent(given, required)
         if (valid)
             return true;
         let msg = `Not all fields present in ${givenName}`
-        DefaultResponse.Error(res, msg, {required : required, given : given})
+        DefaultResponse.Error(res, msg, {required: required, given: given})
         return false;
     }
 
@@ -45,7 +58,7 @@ class Middleware {
         let key = 'body'
         return Middleware.#MiddlewareRequiredFields(req[key], res, required, key);
     }
-    static MiddlewareRequiredFieldsQuery(req, res, required) {
+    static CheckRequiredFieldsQueryParams(req, res, required) {
         let key = 'query'
         return Middleware.#MiddlewareRequiredFields(req[key], res, required, key);
     }

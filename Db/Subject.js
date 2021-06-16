@@ -1,24 +1,34 @@
+const DbUtils = require("./DbUtils");
+
 class Subject {
     static Queries = {
-        findAll: function () {
+        findAll() {
             return {
                 sql: 'SELECT * FROM subject',
                 values: []
             }
         },
-        addSubjectByUserID: function (name, user_ID) {
+        addSubjectByTeacherAccountID(user_ID, name, description) {
             return {
-                sql: 'call Subject_Add(?, ?)',
-                values: [name, user_ID]
+                sql: 'call Subject_Add(?, ?, ?)',
+                values: [user_ID, name, description]
             }
         },
-        // findSubjectsOfTeacherbyUserID: function (user_ID) {
-        //     return {
-        //         sql: 'SELECT * FROM subject WHERE ',
-        //         values: [name, user_ID]
-        //     }
-        // }
-
+        findSubjectsOfTeacherByAccountID(user_ID) {
+            return {
+                sql: 'call Subject_FindByTeacherAccID(?)',
+                values: [user_ID]
+            }
+        }
+    }
+    static GetAll() {
+        return DbUtils.Query(Subject.Queries.findAll())
+    }
+    static AddSubject(user_ID, name, description) {
+        return DbUtils.Query(Subject.Queries.addSubjectByTeacherAccountID(user_ID, name, description))
+    }
+    static GetTeachersSubjects(user_ID) {
+        return DbUtils.Query(Subject.Queries.findSubjectsOfTeacherByAccountID(user_ID))
     }
 }
 

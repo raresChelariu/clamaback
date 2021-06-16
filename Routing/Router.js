@@ -95,6 +95,8 @@ class Router {
     }
     static ExecuteListener(req, res) {
         let actions = Router.#getRouteListener(req, res)
+        if (null === actions)
+            return;
         for (let i = 0; i < actions.length; i++) {
             let currentAction = actions[i]
             let goNext = currentAction(req, res)
