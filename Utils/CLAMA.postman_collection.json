@@ -56,7 +56,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\" : \"ciprianbadea@gmail.com\",\r\n    \"pass\" : \"pass123\"\r\n}",
+							"raw": "{\r\n    \"email\" : \"ionelpop@gmail.com\",\r\n    \"pass\" : \"pass123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -76,13 +76,39 @@
 					"response": []
 				},
 				{
-					"name": "Register",
+					"name": "Register as teacher",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"email\" : \"ionelpop@gmail.com\",\r\n    \"pass\" : \"pass123\",\r\n    \"first_name\": \"Ionel\",   \r\n    \"last_name\": \"Pop\",\r\n    \"account_type\": \"teacher\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-ACC}}/register",
+							"host": [
+								"{{CL-ACC}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register as student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"adriangeo@gmail.com\",\r\n    \"pass\" : \"pass123\",\r\n    \"first_name\": \"Geo\",   \r\n    \"last_name\": \"Adrian\",\r\n    \"account_type\": \"student\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -274,7 +300,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{JWT-TEACHER}}",
+									"value": "{{JWT-STUDENT}}",
 									"type": "string"
 								}
 							]
@@ -282,7 +308,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CL-SC}}/subject?subject_name=SD",
+							"raw": "{{CL-SC}}/subject?subject_name=SD&teacher_id=1",
 							"host": [
 								"{{CL-SC}}"
 							],
@@ -293,6 +319,10 @@
 								{
 									"key": "subject_name",
 									"value": "SD"
+								},
+								{
+									"key": "teacher_id",
+									"value": "1"
 								}
 							]
 						}
@@ -386,6 +416,43 @@
 							],
 							"path": [
 								"solution"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add solution",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-STUDENT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "homework",
+									"type": "file",
+									"src": "/C:/Users/Rares/Desktop/runGuide.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{CL-ASN}}/upload",
+							"host": [
+								"{{CL-ASN}}"
+							],
+							"path": [
+								"upload"
 							]
 						}
 					},
@@ -486,6 +553,132 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Attendance",
+			"item": [
+				{
+					"name": "Get attendance code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-ATND}}/validate?attendance_token=tokenhere",
+							"host": [
+								"{{CL-ATND}}"
+							],
+							"path": [
+								"validate"
+							],
+							"query": [
+								{
+									"key": "attendance_token",
+									"value": "tokenhere"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate attendance token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CL-ATND}}",
+							"host": [
+								"{{CL-ATND}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Solutions",
+			"item": [
+				{
+					"name": "Upload solution",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-STUDENT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "filetoupload",
+									"type": "file",
+									"src": "/C:/Users/Rares/Desktop/runGuide.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{CL-SOL}}/upload?assignment_id=1",
+							"host": [
+								"{{CL-SOL}}"
+							],
+							"path": [
+								"upload"
+							],
+							"query": [
+								{
+									"key": "assignment_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download solution",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT-TEACHER}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"assignment_id\": 1,\r\n    \"student_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CL-SOL}}/download",
+							"host": [
+								"{{CL-SOL}}"
+							],
+							"path": [
+								"download"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -511,7 +704,7 @@
 	"variable": [
 		{
 			"key": "JWT-TEACHER",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJjaXByaWFuYmFkZWFAZ21haWwuY29tIiwiZmlyc3RfbmFtZSI6IkNpcHJpYW4iLCJsYXN0X25hbWUiOiJCYWRlYSIsImFjY291bnRfdHlwZSI6InRlYWNoZXIiLCJpYXQiOjE2MjM3MTU4ODcsImV4cCI6MTYyMzcyMzA4N30.RmPiYFWU_5W73KQ4ctN5vFjZLCqQt8mz84rYYl-xzVI"
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MiwiZW1haWwiOiJpb25lbHBvcEBnbWFpbC5jb20iLCJmaXJzdF9uYW1lIjoiSW9uZWwiLCJsYXN0X25hbWUiOiJQb3AiLCJhY2NvdW50X3R5cGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNjI0MDUxNDgxLCJleHAiOjE2MjQwNTg2ODF9.RTl01oQPRNoKfkyfy7HZIXhuj7H8J0p5D0cV54i7wbM"
 		},
 		{
 			"key": "CL-HOME",
@@ -536,6 +729,18 @@
 		{
 			"key": "CL-GRADES",
 			"value": "{{CL-HOME}}/grades"
+		},
+		{
+			"key": "JWT-STUDENT",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZW1haWwiOiJhZHJpYW5nZW9AZ21haWwuY29tIiwiZmlyc3RfbmFtZSI6IkdlbyIsImxhc3RfbmFtZSI6IkFkcmlhbiIsImFjY291bnRfdHlwZSI6InN0dWRlbnQiLCJpYXQiOjE2MjQwNTE0NDYsImV4cCI6MTYyNDA1ODY0Nn0.NG_lqiGf8OL0QV7IRJTHpBnaAnwGjwNsBGP_vmykbS4"
+		},
+		{
+			"key": "CL-SOL",
+			"value": "{{CL-HOME}}/solutions"
+		},
+		{
+			"key": "CL-ATND",
+			"value": "{{CL-HOME}}/attendance"
 		}
 	]
 }

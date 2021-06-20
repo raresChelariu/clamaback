@@ -1,7 +1,7 @@
 const router = require('../Routing/Router')
 const Subject = require('../Db/Subject')
 const Middleware = require("../CustomMiddleware/Middleware")
-const DefaultResponse = require("../Routing/DefaultResponse");
+const DefaultResponse = require("../Routing/DefaultResponse")
 
 const routePrefix = '/subjects'
 const RouteWithPrefix = (path) => routePrefix + path
