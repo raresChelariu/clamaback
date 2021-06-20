@@ -439,7 +439,7 @@ begin
     where school_class.ID = in_school_class_id
       and school_class.subject_ID in (select ID from subject where subject.teacher_ID = v_teacher_ID);
 
-    if v_school_class_is_of_given_teacher != 0 then
+    if v_school_class_is_of_given_teacher = 0 then
         signal sqlstate '45000' set message_text = '$School class does not belong to teacher$';
     end if;
 

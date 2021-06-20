@@ -46,11 +46,11 @@ router.post(RouteWithPrefix(''),
     (req, res) => Middleware.CheckFieldsBody(req, res, Required.addGrade),
     (req, res) => {
         let teacherID = req['user']['ID']
-        let student_acc_ID = req['body'][Required.addAssignmentGrade[0]]
-        let school_class_ID = req['body'][Required.addAssignmentGrade[1]]
-        let score_current = req['body'][Required.addAssignmentGrade[2]]
-        let score_ceiling = req['body'][Required.addAssignmentGrade[3]]
-        let teacher_comment = req['body'][Required.addAssignmentGrade[4]]
+        let student_acc_ID = req['body'][Required.addGrade[0]]
+        let school_class_ID = req['body'][Required.addGrade[1]]
+        let score_current = req['body'][Required.addGrade[2]]
+        let score_ceiling = req['body'][Required.addGrade[3]]
+        let teacher_comment = req['body'][Required.addGrade[4]]
 
         Grades.addSimpleGrade(teacherID, student_acc_ID, school_class_ID, score_current, score_ceiling, teacher_comment)
             .then(result => res['json'](result))
