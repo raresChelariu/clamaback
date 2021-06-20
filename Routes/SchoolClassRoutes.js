@@ -7,7 +7,7 @@ const routePrefix = '/schoolclasses'
 const RouteWithPrefix = (path) => routePrefix + path
 
 const Required = {
-    GetSchoolClassesOfSubjectQuery: ['subject_name'],
+    GetSchoolClassesOfSubjectQuery: ['teacher_id', 'subject_name'],
     AddSchoolClassBody: ['subject_name', "school_class_name"]
 }
 
@@ -21,10 +21,10 @@ router.get(RouteWithPrefix('/all'), Middleware.CheckAuthTeacher,
     }
 )
 
-router.get(RouteWithPrefix('/subject'), Middleware.CheckAuthTeacher, (req, res) => Middleware.CheckFieldsQueryParams(req, res, Required.GetSchoolClassesOfSubjectQuery),
+router.get(RouteWithPrefix('/subject'), Middleware.CheckAuth, (req, res) => Middleware.CheckFieldsQueryParams(req, res, Required.GetSchoolClassesOfSubjectQuery),
     (req, res) => {
-        let user_ID = req["user"]["ID"]
-        let subjectName = req["query"][Required.GetSchoolClassesOfSubjectQuery[0]]
+        let user_ID = req["query"][Required.GetSchoolClassesOfSubjectQuery[0]]
+        let subjectName = req["query"][Required.GetSchoolClassesOfSubjectQuery[1]]
 
         SchoolClass.GetSchoolClassesOfTeachersSubject(user_ID, subjectName)
             .then(result => res["json"](result[0]))
@@ -48,3 +48,26 @@ router.post(RouteWithPrefix(''), Middleware.CheckAuthTeacher, (req, res) => Midd
     }
 )
 
+router.post(RouteWithPrefix('/student/add'),
+    Middleware.CheckAuthTeacher,
+    (req, res) => Middleware.CheckFieldsBody(req, res, ['student_id', 'school_class_id']),
+    (req, res) => {
+        SchoolClass.AddStudentToSchoolClass(req.body["student_id"], req.body["school_class_id"])
+            .then(result => res["json"](result, 201))
+            .catch(e => {
+                DefaultResponse.DbPredefinedError(res, e)
+            })
+    }
+)
+
+router.post(RouteWithPrefix('/student/deny'),
+    Middleware.CheckAuthTeacher,
+    (req, res) => Middleware.CheckFieldsBody(req, res, ['student_id', 'school_class_id']),
+    (req, res) => {
+        SchoolClass.DenyStudentToSchoolClass(req.body["student_id"], req.body["school_class_id"])
+            .then(result => res["json"](result, 201))
+            .catch(e => {
+                DefaultResponse.DbPredefinedError(res, e)
+            })
+    }
+)

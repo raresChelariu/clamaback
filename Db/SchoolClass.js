@@ -25,8 +25,27 @@ class SchoolClass {
                 sql: 'call SchoolClass_GetSchoolClassByTeachersSubject(?, ?)',
                 values: [user_ID, subjectName]
             }
+        },
+        addStudentToClass(student_acc_ID, school_class_ID) {
+            return {
+                sql: 'call SchoolClass_AddStudent(?, ?)',
+                values: [student_acc_ID, school_class_ID]
+            }
+        },
+        isStudentInClass(student_acc_ID) {
+            return {
+                sql: 'select * from class_student_association where student_ID in (select ID from student where account_ID=?)',
+                values: [student_acc_ID]
+            }
+        },
+        denyStudentToSchoolClass(student_acc_ID, school_class_ID) {
+            return {
+                sql: 'call SchoolClass_DenyStudent(?, ?)',
+                values: [student_acc_ID, school_class_ID]
+            }
         }
     }
+
 
     /**
      * [DEVELOPMENT ONLY] Gets all school classes.
@@ -66,6 +85,25 @@ class SchoolClass {
      */
     static GetSchoolClassesOfTeachersSubject(user_ID, subjectName) {
         return DbUtils.Query(SchoolClass.Queries.getSchoolClassesOfTeachersSubject(user_ID, subjectName))
+    }
+
+
+    static AddStudentToSchoolClass(student_acc_ID, school_class_ID) {
+        return DbUtils.Query(SchoolClass.Queries.addStudentToClass(student_acc_ID, school_class_ID))
+    }
+    static IsStudentInSchoolClass(student_acc_ID) {
+        return new Promise((resolve, reject) => {
+            DbUtils.Query(SchoolClass.Queries.isStudentInClass(student_acc_ID))
+                .then(result => {
+                    if (result[0].length === 0)
+                        reject('Student does not belong to class yet')
+                    resolve(result[0][0]['student_class_state'])
+                })
+                .catch(e => reject(e))
+        })
+    }
+    static DenyStudentToSchoolClass(student_acc_ID, school_class_ID) {
+        return DbUtils.Query(SchoolClass.Queries.denyStudentToSchoolClass(student_acc_ID, school_class_ID))
     }
 }
 

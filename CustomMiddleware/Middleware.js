@@ -21,7 +21,16 @@ class Middleware {
         }
         return true
     }
-
+    static CheckAuthStudent = (req, res) => {
+        if (false === Middleware.CheckAuth(req, res)) {
+            return false
+        }
+        if (Account.AccountTypes.Student !== req["user"]["account_type"]) {
+            DefaultResponse.Error(res, DefaultResponse.Messages.UnauthorizedStudentNeeded, null, 401)
+            return false
+        }
+        return true
+    }
     static CheckAuth(req, res) {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]

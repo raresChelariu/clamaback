@@ -1,5 +1,6 @@
 const url = require('url')
-const DefaultResponse = require("./DefaultResponse");
+const DefaultResponse = require("./DefaultResponse")
+const formidable = require("formidable")
 
 // noinspection JSDeprecatedSymbols
 class RequestHelper {
@@ -10,13 +11,14 @@ class RequestHelper {
         this.req = req
         this.bodyFormat = bodyFormat
     }
+
     static RunResponseHelpers(res) {
         res.json = function jsonResponse(content, statusCode = 200) {
-            this.writeHead(statusCode, { 'Content-Type': 'application/json' })
+            this.writeHead(statusCode, {'Content-Type': 'application/json'})
             this.end(JSON.stringify(content))
         }
         res.plain = function plainResponse(content, statusCode = 200) {
-            this.writeHead(statusCode, { 'Content-Type': 'text/plain' })
+            this.writeHead(statusCode, {'Content-Type': 'text/plain'})
             this.end(content)
         }
         res.html = function htmlResponse(content, statusCode = 200) {
@@ -40,6 +42,7 @@ class RequestHelper {
         }).catch(e => console.log(e))
 
     }
+
     /**
      * Extracts path from request url. For www.google.com/users/books?id=1 will extract '/users/books'
      * @param {IncomingMessage} req
@@ -53,11 +56,27 @@ class RequestHelper {
         this.req["query"] = url.parse(this.req.url, true).query
     }
 
-    BodyJSONHelper() {
+    static #isJsonParsable(string) {
         try {
-            this.req["body"] = JSON.parse(this.req["rawBody"])
+            JSON.parse(string);
         } catch (e) {
-            throw DefaultResponse.Messages.RequestBodyInvalidJSON
+            return false;
+        }
+        return true;
+    }
+    static getFilesFromReq(req) {
+        return new Promise((resolve, reject) => {
+            let form = new formidable.IncomingForm();
+            form.parse(req, function(err, fields, files) {
+                if (err)
+                    reject(err)
+                resolve({fields: fields, files: files})
+            });
+        });
+    }
+    BodyJSONHelper() {
+        if (RequestHelper.#isJsonParsable(this.req["rawBody"])) {
+            this.req["body"] = JSON.parse(this.req["rawBody"])
         }
     }
 

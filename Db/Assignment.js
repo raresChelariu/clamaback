@@ -19,9 +19,14 @@ class Assignment{
                 sql: 'SELECT * FROM assignment WHERE school_class_ID=?',
                 values: [school_class_ID]
             }
+        },
+        ValidSolutionUpload(student_ID, assignment_ID, file_name) {
+            return {
+                sql: 'call Solution_ValidUpload(?, ?, ?)',
+                values: [student_ID, assignment_ID, file_name]
+            }
         }
     }
-
     /**
      * [DEVELOPMENT ONLY] Gets all assignments.
      * @return {Promise<>}
@@ -50,6 +55,9 @@ class Assignment{
      */
     static GetClassAssignments(school_class_ID) {
         return DbUtils.Query(Assignment.Queries.GetClassAssignments(school_class_ID))
+    }
+    static ValidSolutionUpload(student_id, assignment_id, file_name) {
+        return DbUtils.Query(Assignment.Queries.ValidSolutionUpload(student_id, assignment_id, file_name))
     }
 }
 
